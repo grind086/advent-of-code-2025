@@ -2,22 +2,10 @@ use std::str::FromStr;
 
 use anyhow::Error;
 
-static INPUT: &str = include_str!("../input");
-
-fn main() {
-    let mut state = State::starting_at(50);
-    let mut count = 0;
-    for line in INPUT.lines() {
-        let inst = Instruction::from_str(line).unwrap();
-        if state.apply(inst).is_zero() {
-            count += 1;
-        }
-    }
-    println!("{count}");
-}
+pub static INPUT: &str = include_str!("../input");
 
 /// The state of a dial with values 0-99.
-struct State(i32);
+pub struct State(i32);
 
 impl State {
     pub const fn starting_at(n: i32) -> Self {
@@ -25,12 +13,19 @@ impl State {
     }
 
     /// Applies the [`Instruction`], and returns a reference to the state.
-    pub fn apply(&mut self, inst: Instruction) -> &Self {
-        self.0 = match inst {
-            Instruction::Left(n) => (((self.0 - i32::from(n)) % 100) + 100) % 100,
-            Instruction::Right(n) => (self.0 + i32::from(n)) % 100,
-        };
-        self
+    pub fn apply(&mut self, inst: Instruction) -> u16 {
+        match inst {
+            Instruction::Left(n) => {
+                let prev = self.0;
+                self.0 = (((self.0 - i32::from(n)) % 100) + 100) % 100;
+                n / 100 + (prev < self.0) as u16
+            }
+            Instruction::Right(n) => {
+                let prev = self.0;
+                self.0 = (self.0 + i32::from(n)) % 100;
+                n / 100 + (prev > self.0) as u16
+            }
+        }
     }
 
     pub fn is_zero(&self) -> bool {
@@ -39,7 +34,7 @@ impl State {
 }
 
 /// A dial rotation instruction.
-enum Instruction {
+pub enum Instruction {
     /// Rotate CCW (to lower numbers).
     Left(u16),
     /// Rotate CW (to higher numbers).
