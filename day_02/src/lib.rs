@@ -8,16 +8,16 @@ pub static TEST_INPUT: &str = concat!(
     "824824821-824824827,2121212118-2121212124",
 );
 
-pub fn count_invalid_ids(input: &str) -> usize {
-    iter_invalid_ids(input).count()
+pub fn count_invalid_ids(input: &str, pred: fn(&u64) -> bool) -> usize {
+    iter_invalid_ids(input, pred).count()
 }
 
-pub fn sum_invalid_ids(input: &str) -> u64 {
-    iter_invalid_ids(input).sum()
+pub fn sum_invalid_ids(input: &str, pred: fn(&u64) -> bool) -> u64 {
+    iter_invalid_ids(input, pred).sum()
 }
 
-pub fn iter_invalid_ids(input: &str) -> impl Iterator<Item = u64> {
-    iter_id_ranges(input).flat_map(|range| range.filter(is_invalid_id))
+pub fn iter_invalid_ids(input: &str, pred: fn(&u64) -> bool) -> impl Iterator<Item = u64> {
+    iter_id_ranges(input).flat_map(move |range| range.filter(pred))
 }
 
 pub fn iter_id_ranges(input: &str) -> impl Iterator<Item = RangeInclusive<u64>> {
@@ -27,7 +27,7 @@ pub fn iter_id_ranges(input: &str) -> impl Iterator<Item = RangeInclusive<u64>> 
     })
 }
 
-pub fn is_invalid_id(n: &u64) -> bool {
+pub fn pred_part1(n: &u64) -> bool {
     let s = n.to_string();
     s.len().is_multiple_of(2) && s[0..s.len() / 2] == s[s.len() / 2..]
 }
@@ -38,16 +38,16 @@ mod tests {
 
     #[test]
     fn test_input_invalid_count() {
-        assert_eq!(count_invalid_ids(TEST_INPUT), 8);
+        assert_eq!(count_invalid_ids(TEST_INPUT, pred_part1), 8);
     }
 
     #[test]
     fn test_input_invalid_sum() {
-        assert_eq!(sum_invalid_ids(TEST_INPUT), 1227775554);
+        assert_eq!(sum_invalid_ids(TEST_INPUT, pred_part1), 1227775554);
     }
 
     #[test]
     fn day_01_result() {
-        assert_eq!(sum_invalid_ids(INPUT), 40055209690);
+        assert_eq!(sum_invalid_ids(INPUT, pred_part1), 40055209690);
     }
 }
