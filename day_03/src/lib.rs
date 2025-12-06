@@ -59,7 +59,7 @@ mod tests {
     }
 
     #[test]
-    fn part1_fail_1_too_low() {
-        assert!(max_joltage_sum(INPUT) > 16669);
+    fn max_digit_can_repeat() {
+        assert_eq!(bank_max_joltage("124444266221211"), 66);
     }
 }
