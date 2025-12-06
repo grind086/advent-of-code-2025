@@ -12,4 +12,3 @@ name = "part2"
 path = "src/part2.rs"
 
 [dependencies]
-anyhow = "1"
