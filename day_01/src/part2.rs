@@ -8,6 +8,9 @@ fn main() {
     for line in INPUT.lines() {
         let inst = Instruction::from_str(line).unwrap();
         count += state.apply(inst);
+        if state.is_zero() {
+            count += 1;
+        }
     }
     println!("{count}");
 }
